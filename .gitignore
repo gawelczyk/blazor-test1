@@ -1,0 +1,8 @@
+/.vs
+/BlazorApp2/Client/obj
+/BlazorApp2/Client/bin
+/BlazorApp2/Server/obj
+/BlazorApp2/Server/bin
+*.user
+/BlazorApp2/Shared/bin
+/BlazorApp2/Shared/obj
