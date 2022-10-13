@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using BlazorApp2.Shared
 @inject HttpClient Http
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -10,38 +11,56 @@
 
 @if (forecasts == null)
 {
-    <p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Temp. (C)</th>
+				<th>Temp. (F)</th>
+				<th>Summary</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var forecast in forecasts)
+			{
+				<tr>
+					<td>@forecast.Date.ToShortDateString()</td>
+					<td>@forecast.TemperatureC</td>
+					<td>@forecast.TemperatureF</td>
+					<td>@forecast.Summary</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<hr />
+
+	<label for="days">Number of days to fetch</label>
+	<input name="days" type="number" placeholder="days" @bind="Days" />
+	<button @onclick="FetchDays">refresh</button>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+	private WeatherForecast[]? forecasts;
+	private int? Days;
 
-    protected override async Task OnInitializedAsync()
-    {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+	}
+
+	private async Task FetchDays()
+	{
+
+		if (Days > 0)
+		{
+			forecasts = null;
+			forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>($"WeatherForecast?days={Days}");
+		}
+		else
+			await JsRuntime.InvokeVoidAsync("alert", $"Days: {Days ?? 0} - it has to be bigger then 0"); // Alert
+	}
 }

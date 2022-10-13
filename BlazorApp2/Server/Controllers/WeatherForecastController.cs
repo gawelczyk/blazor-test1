@@ -1,5 +1,6 @@
 using BlazorApp2.Shared;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace BlazorApp2.Server.Controllers
 {
@@ -7,10 +8,7 @@ namespace BlazorApp2.Server.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        private static readonly string[] Summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
 
         private readonly ILogger<WeatherForecastController> _logger;
 
@@ -20,9 +18,12 @@ namespace BlazorApp2.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> Get(int days = 5)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            _logger.LogInformation($"days = {days}");
+            Debug.WriteLine($"Debug info: days = {days}");
+            System.Threading.Thread.Sleep(1000);
+            return Enumerable.Range(1, days).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),
