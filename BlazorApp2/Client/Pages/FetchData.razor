@@ -2,6 +2,7 @@
 @using BlazorApp2.Shared
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ILogger<Counter> logger
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -54,11 +55,12 @@ else
 
 	private async Task FetchDays()
 	{
-
+		logger.LogWarning($"Fetch clicked: {Days}");
 		if (Days > 0)
 		{
 			forecasts = null;
 			forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>($"WeatherForecast?days={Days}");
+			logger.LogInformation($"Fetched records: {forecasts?.Count()}");
 		}
 		else
 			await JsRuntime.InvokeVoidAsync("alert", $"Days: {Days ?? 0} - it has to be bigger then 0"); // Alert
